@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const getClass = (row: Number, col: Number) => {
+const getClass = (row: any, col: any) => {
   return (row + col) % 2 === 0 ? 'white' : 'black'
 }
 </script>
