@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { Number } from '../node_modules/sass/types/legacy/function.d';
 
-const getClass = (row, col) => {
+const getClass = (row: Number, col: Number) => {
   return (row + col) % 2 === 0 ? 'white' : 'black'
 }
 </script>
