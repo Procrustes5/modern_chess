@@ -18,7 +18,7 @@
               (parseInt(index / 8) % 2 === 1 && index % 2 === 1)
           }"
         >
-          <div class="piece" :class="`${item.color}`" @click="handlePiece">
+          <div class="piece" :class="`${item.color}`" @click="handlePiece(item)">
             {{ item.piece.code }}
           </div>
         </div>
@@ -43,7 +43,7 @@ const teamColor = computed(() => {
 })
 
 const file = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-const rank = ['1', '2', '3', '4', '5', '6', '7', '8']
+const rank = [1, 2, 3, 4, 5, 6, 7, 8]
 const piece = [
   { code: 'k', name: 'King' },
   { code: 'q', name: 'Queen' },
@@ -57,70 +57,81 @@ const createChessboard = () => {
   for (let j = rank.length; j > 0; j--) {
     for (let i = 0; i < file.length; i++) {
       chessboard.value.push({
-        file: file[i],
-        rank: rank[j - 1],
+        file: i,
+        rank: j - 1,
         piece: { code: '', name: 'none' },
         color: null
       })
     }
   }
-}
+};
+
 const initGame = () => {
   const initSquare = [
     // King
-    { file: 'e', rank: '8', piece: piece[0], color: teamColor.value.oppoColor },
-    { file: 'd', rank: '1', piece: piece[0], color: teamColor.value.myColor },
+    { file: 4, rank: 7, piece: piece[0], color: teamColor.value.oppoColor },
+    { file: 3, rank: 0, piece: piece[0], color: teamColor.value.myColor },
     // Queen
-    { file: 'd', rank: '8', piece: piece[1], color: teamColor.value.oppoColor },
-    { file: 'e', rank: '1', piece: piece[1], color: teamColor.value.myColor },
+    { file: 3, rank: 7, piece: piece[1], color: teamColor.value.oppoColor },
+    { file: 4, rank: 0, piece: piece[1], color: teamColor.value.myColor },
     // Rook
-    { file: 'a', rank: '8', piece: piece[2], color: teamColor.value.oppoColor },
-    { file: 'a', rank: '1', piece: piece[2], color: teamColor.value.myColor },
-    { file: 'h', rank: '8', piece: piece[2], color: teamColor.value.oppoColor },
-    { file: 'h', rank: '1', piece: piece[2], color: teamColor.value.myColor },
+    { file: 0, rank: 7, piece: piece[2], color: teamColor.value.oppoColor },
+    { file: 0, rank: 0, piece: piece[2], color: teamColor.value.myColor },
+    { file: 7, rank: 7, piece: piece[2], color: teamColor.value.oppoColor },
+    { file: 7, rank: 0, piece: piece[2], color: teamColor.value.myColor },
     // Bishop
-    { file: 'c', rank: '8', piece: piece[3], color: teamColor.value.oppoColor },
-    { file: 'c', rank: '1', piece: piece[3], color: teamColor.value.myColor },
-    { file: 'f', rank: '8', piece: piece[3], color: teamColor.value.oppoColor },
-    { file: 'f', rank: '1', piece: piece[3], color: teamColor.value.myColor },
+    { file: 2, rank: 7, piece: piece[3], color: teamColor.value.oppoColor },
+    { file: 2, rank: 0, piece: piece[3], color: teamColor.value.myColor },
+    { file: 5, rank: 7, piece: piece[3], color: teamColor.value.oppoColor },
+    { file: 5, rank: 0, piece: piece[3], color: teamColor.value.myColor },
     // Knight
-    { file: 'b', rank: '8', piece: piece[4], color: teamColor.value.oppoColor },
-    { file: 'b', rank: '1', piece: piece[4], color: teamColor.value.myColor },
-    { file: 'g', rank: '8', piece: piece[4], color: teamColor.value.oppoColor },
-    { file: 'g', rank: '1', piece: piece[4], color: teamColor.value.myColor },
-    // Pawn Opponent
-    { file: 'a', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 'b', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 'c', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 'd', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 'e', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 'f', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 'g', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 'h', rank: '7', piece: piece[5], color: teamColor.value.oppoColor },
-    // Pawn My
-    { file: 'a', rank: '2', piece: piece[5], color: teamColor.value.myColor },
-    { file: 'b', rank: '2', piece: piece[5], color: teamColor.value.myColor },
-    { file: 'c', rank: '2', piece: piece[5], color: teamColor.value.myColor },
-    { file: 'd', rank: '2', piece: piece[5], color: teamColor.value.myColor },
-    { file: 'e', rank: '2', piece: piece[5], color: teamColor.value.myColor },
-    { file: 'f', rank: '2', piece: piece[5], color: teamColor.value.myColor },
-    { file: 'g', rank: '2', piece: piece[5], color: teamColor.value.myColor },
-    { file: 'h', rank: '2', piece: piece[5], color: teamColor.value.myColor }
+    { file: 1, rank: 7, piece: piece[4], color: teamColor.value.oppoColor },
+    { file: 1, rank: 0, piece: piece[4], color: teamColor.value.myColor },
+    { file: 6, rank: 7, piece: piece[4], color: teamColor.value.oppoColor },
+    { file: 6, rank: 0, piece: piece[4], color: teamColor.value.myColor },
+    // Opponent Pawn 
+    { file: 0, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    { file: 1, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    { file: 2, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    { file: 3, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    { file: 4, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    { file: 5, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    { file: 6, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    { file: 7, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
+    // My Pawn 
+    { file: 0, rank: 1, piece: piece[5], color: teamColor.value.myColor },
+    { file: 1, rank: 1, piece: piece[5], color: teamColor.value.myColor },
+    { file: 2, rank: 1, piece: piece[5], color: teamColor.value.myColor },
+    { file: 3, rank: 1, piece: piece[5], color: teamColor.value.myColor },
+    { file: 4, rank: 1, piece: piece[5], color: teamColor.value.myColor },
+    { file: 5, rank: 1, piece: piece[5], color: teamColor.value.myColor },
+    { file: 6, rank: 1, piece: piece[5], color: teamColor.value.myColor },
+    { file: 7, rank: 1, piece: piece[5], color: teamColor.value.myColor }
   ]
   initSquare.forEach((init) => {
     const index = chessboard.value.findIndex((item) => {
       return item.file === init.file && item.rank === init.rank
-    })
-    chessboard.value[index] = init
+    });
+    chessboard.value[index] = init;
   })
 }
 
-const handlePiece = () => {}
+const handlePiece = (item) => {
+  console.log(item)
+  if (item.piece.name === "Pawn") {
+    const nextFile = item.file
+    const nextRank = item.rank + 1;
+    
+    console.log(nextRank.toString())
+    
+    const h = { file: item.piece, rank: nextRank.toString }
+  }
+}
 
 onMounted(() => {
-  createChessboard()
-  initGame()
-})
+  createChessboard();
+  initGame();
+});
 
 const getDadJoke = async () => {
   isLoading.value = true
@@ -158,7 +169,7 @@ const getDadJoke = async () => {
   }
 
   isLoading.value = false
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -192,6 +203,9 @@ const getDadJoke = async () => {
           justify-content: center;
           align-items: center;
           border-radius: 50%;
+        }
+        .w, .b {
+          box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
         }
         .w {
           background: white;
