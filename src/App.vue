@@ -15,6 +15,7 @@
   <div class="screen-wrapper">
     <div class="playground">
       <div class="nav-bar">
+        <span class="title">Play Chess!</span>
         <div class="turn-notify">
           <span>Turn : Black</span>
         </div>
@@ -26,7 +27,7 @@
           class="square"
           :class="{whiteSquare: (parseInt(index / 8) % 2 === 0 && index % 2 === 0) || (parseInt(index / 8) % 2 === 1 && index % 2 === 1)}"
         >
-          <span>{{`${item.posX}${item.posY}`}}</span>
+          <div class="piece" :class="`${item.color}`">{{ item.piece.code }}</div>
         </div>
       </div>
     </div>
@@ -34,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 const VITE_CHATGPT_TOKEN = import.meta.env.VITE_CHATGPT_TOKEN || 'any-default-local-build_env'
 const topic = ref('');
 const joke = ref();
@@ -42,24 +43,77 @@ const isLoading = ref(false);
 
 const chessboard = ref([]);
 const isBlack = ref(true);
+const teamColor = computed(() => {
+  const myColor = isBlack.value ? 'b' : 'w';
+  const oppoColor = isBlack.value ? 'w' : 'b';
+  return {myColor, oppoColor};
+})
 
 const file = ["a", "b", "c", "d", "e", "f", "g", "h"];
 const rank = ["1", "2", "3", "4", "5", "6", "7", "8"];
-const piece = [{code: "k", name: "King"}, {code: "q", name: "Queen"}, {code: "r", name: "Rook"}, {code: "b", name: "Bishops"}, {code: "n", name: "Knight"}, {code: "p", name: "Pawn"}]
+const piece = [{code: "k", name: "King"}, {code: "q", name: "Queen"}, {code: "r", name: "Rook"}, {code: "b", name: "Bishop"}, {code: "n", name: "Knight"}, {code: "p", name: "Pawn"}]
 
 const createChessboard = () => {
-  for (let i = file.length; i > 0; i--) {
-    for (let j = 0; j < rank.length; j++) {
-      chessboard.value.push({posX: file[i - 1], posY: rank[j], piece: null, color: null })
+  for (let j = rank.length; j > 0; j--) {
+    for (let i = 0; i < file.length; i++) {
+      chessboard.value.push({file: file[i], rank: rank[j - 1], piece: {code: '', name: 'none'}, color: null })
     }
   }
 }
 const initGame = () => {
-  
+  const initSquare = [
+    // King
+    {file: "e", rank: "8", piece: piece[0], color: teamColor.value.oppoColor}, 
+    {file: "d", rank: "1", piece: piece[0], color: teamColor.value.myColor},
+    // Queen
+    {file: "d", rank: "8", piece: piece[1], color: teamColor.value.oppoColor}, 
+    {file: "e", rank: "1", piece: piece[1], color: teamColor.value.myColor},
+    // Rook
+    {file: "a", rank: "8", piece: piece[2], color: teamColor.value.oppoColor}, 
+    {file: "a", rank: "1", piece: piece[2], color: teamColor.value.myColor},
+    {file: "h", rank: "8", piece: piece[2], color: teamColor.value.oppoColor}, 
+    {file: "h", rank: "1", piece: piece[2], color: teamColor.value.myColor},
+    // Bishop
+    {file: "c", rank: "8", piece: piece[3], color: teamColor.value.oppoColor}, 
+    {file: "c", rank: "1", piece: piece[3], color: teamColor.value.myColor},
+    {file: "f", rank: "8", piece: piece[3], color: teamColor.value.oppoColor}, 
+    {file: "f", rank: "1", piece: piece[3], color: teamColor.value.myColor},
+    // Knight
+    {file: "b", rank: "8", piece: piece[4], color: teamColor.value.oppoColor}, 
+    {file: "b", rank: "1", piece: piece[4], color: teamColor.value.myColor},
+    {file: "g", rank: "8", piece: piece[4], color: teamColor.value.oppoColor}, 
+    {file: "g", rank: "1", piece: piece[4], color: teamColor.value.myColor},
+    // Pawn Opponent
+    {file: "a", rank: "7", piece: piece[5], color: teamColor.value.oppoColor}, 
+    {file: "b", rank: "7", piece: piece[5], color: teamColor.value.oppoColor},
+    {file: "c", rank: "7", piece: piece[5], color: teamColor.value.oppoColor}, 
+    {file: "d", rank: "7", piece: piece[5], color: teamColor.value.oppoColor},
+    {file: "e", rank: "7", piece: piece[5], color: teamColor.value.oppoColor}, 
+    {file: "f", rank: "7", piece: piece[5], color: teamColor.value.oppoColor},
+    {file: "g", rank: "7", piece: piece[5], color: teamColor.value.oppoColor}, 
+    {file: "h", rank: "7", piece: piece[5], color: teamColor.value.oppoColor},
+    // Pawn My
+    {file: "a", rank: "2", piece: piece[5], color: teamColor.value.myColor}, 
+    {file: "b", rank: "2", piece: piece[5], color: teamColor.value.myColor},
+    {file: "c", rank: "2", piece: piece[5], color: teamColor.value.myColor}, 
+    {file: "d", rank: "2", piece: piece[5], color: teamColor.value.myColor},
+    {file: "e", rank: "2", piece: piece[5], color: teamColor.value.myColor}, 
+    {file: "f", rank: "2", piece: piece[5], color: teamColor.value.myColor},
+    {file: "g", rank: "2", piece: piece[5], color: teamColor.value.myColor}, 
+    {file: "h", rank: "2", piece: piece[5], color: teamColor.value.myColor},
+  ];
+  initSquare.forEach((init) => {
+    const index = chessboard.value.findIndex((item) => {
+      return item.file === init.file && item.rank === init.rank;
+    });
+    chessboard.value[index] = init;
+  });
 }
 
 onMounted(() => {
   createChessboard();
+  initGame();
+  console.log(chessboard.value)
 })
 
 const getDadJoke = async () => {
@@ -112,7 +166,7 @@ const getDadJoke = async () => {
     justify-content: center;
     align-items: center;
     .nav-bar {
-      width: 100px;
+      width: 200px;
       height: 100%;
     }
     .chessboard {
@@ -124,9 +178,25 @@ const getDadJoke = async () => {
         display: flex;
         justify-content: center;
         align-items: center;
+        background: #cf9052;
+        .piece {
+          width: 80%;
+          height: 80%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 50%;
+        }
+        .w {
+          background: white;
+          color: black;
+        }
+        .b {
+          background: black;
+        }
       }
       .whiteSquare {
-        background: whitesmoke;
+        background: #ffd0a1;
       }
     }
   }
