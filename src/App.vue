@@ -121,9 +121,9 @@ const initGame = () => {
 }
 
 const handlePiece = (item, index) => {
-  console.log(selectedSquare.value)
-  nextChoice.value = [];
-  if (item.piece.name === 'none') {
+  console.log(item)
+  if (nextChoice.value.includes(index)) {
+    nextChoice.value = [];
     const selectedIndex = selectedSquare.value.index;
     chessboard.value[index] = selectedSquare.value.item;
     chessboard.value[selectedIndex] = { file: selectedSquare.value.file, rank: selectedSquare.value.rank, piece: { code: '', name: 'none' }, color: null }
@@ -146,51 +146,12 @@ const handlePiece = (item, index) => {
     nextChoice.value.push(index);
   }
   selectedSquare.value = { item, index };
-  console.log(selectedSquare.value)
 }
 
 onMounted(() => {
   createChessboard();
   initGame();
 });
-
-const getDadJoke = async () => {
-  isLoading.value = true
-  joke.value = null
-  const prompt = `Think about you as the funniest person ever!!! I will give you a topic and you will generate me a dad joke about this topic. the topic is: ${topic.value}`
-  let retryCount = 0
-  let success = false
-
-  while (!success && retryCount < 5) {
-    try {
-      const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
-        {
-          model: 'gpt-3.5-turbo-16k',
-          messages: [{ role: 'user', content: prompt }]
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + VITE_CHATGPT_TOKEN
-          }
-        }
-      )
-      joke.value = response.data.choices[0].message.content
-      success = true // Stop retrying if successful
-    } catch (error) {
-      console.error('Retry attempt:', retryCount, error)
-      retryCount++
-      await new Promise((resolve) => setTimeout(resolve, 2000 * retryCount)) // Wait 2, 4, 6, etc. seconds
-    }
-  }
-
-  if (!success) {
-    joke.value = 'Failed to fetch joke after several attempts.'
-  }
-
-  isLoading.value = false
-};
 </script>
 
 <style scoped lang="scss">
@@ -247,71 +208,5 @@ const getDadJoke = async () => {
       }
     }
   }
-}
-.dad-joke-container {
-  text-align: center;
-  margin: 20px;
-  padding: 20px;
-  border: 2px solid #ff6f61;
-  border-radius: 10px;
-  background-color: #ffecb3;
-}
-
-.title {
-  font-size: 2em;
-  margin-bottom: 20px;
-  color: #ff6f61;
-}
-
-.input-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.input {
-  padding: 10px;
-  border-radius: 5px;
-  border: 2px solid #ff6f61;
-  margin-right: 10px;
-}
-
-.button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  background-color: #ff6f61;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.dad-joke-result {
-  margin-top: 20px;
-  font-size: 1.5em;
-  color: #ff6f61;
-  background-color: #fff;
-  padding: 10px;
-  border-radius: 5px;
-  border: 2px solid #ff6f61;
-}
-
-.joke-text {
-  margin: 0;
-}
-
-.button {
-  position: relative;
-}
-
-.button span {
-  visibility: visible;
-}
-
-.button span.loader {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  visibility: hidden;
 }
 </style>
