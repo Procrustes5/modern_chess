@@ -18,7 +18,7 @@
               (parseInt(index / 8) % 2 === 1 && index % 2 === 1)
           }"
         >
-          <div class="piece" :class="`${item.color}`" @click="handlePiece(item)">
+          <div class="piece" :class="`${item.color}`, { choice: nextChoice.includes(index) }" @click="handlePiece(item, index)">
             {{ item.piece.code }}
           </div>
         </div>
@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { ref, onMounted, computed } from 'vue'
+
 const VITE_CHATGPT_TOKEN = import.meta.env.VITE_CHATGPT_TOKEN || 'any-default-local-build_env'
 const topic = ref('')
 const joke = ref()
@@ -36,6 +37,8 @@ const isLoading = ref(false)
 
 const chessboard = ref([])
 const isBlack = ref(true)
+const nextChoice = ref([])
+const selectedSquare = ref()
 const teamColor = computed(() => {
   const myColor = isBlack.value ? 'b' : 'w'
   const oppoColor = isBlack.value ? 'w' : 'b'
@@ -50,7 +53,8 @@ const piece = [
   { code: 'r', name: 'Rook' },
   { code: 'b', name: 'Bishop' },
   { code: 'n', name: 'Knight' },
-  { code: 'p', name: 'Pawn' }
+  { code: 'p', name: 'Pawn', isMoved: false },
+  { code: '', name: 'none' }
 ]
 
 const createChessboard = () => {
@@ -59,7 +63,7 @@ const createChessboard = () => {
       chessboard.value.push({
         file: i,
         rank: j - 1,
-        piece: { code: '', name: 'none' },
+        piece: piece[6],
         color: null
       })
     }
@@ -116,16 +120,33 @@ const initGame = () => {
   })
 }
 
-const handlePiece = (item) => {
-  console.log(item)
-  if (item.piece.name === "Pawn") {
-    const nextFile = item.file
-    const nextRank = item.rank + 1;
-    
-    console.log(nextRank.toString())
-    
-    const h = { file: item.piece, rank: nextRank.toString }
+const handlePiece = (item, index) => {
+  console.log(selectedSquare.value)
+  nextChoice.value = [];
+  if (item.piece.name === 'none') {
+    const selectedIndex = selectedSquare.value.index;
+    chessboard.value[index] = selectedSquare.value.item;
+    chessboard.value[selectedIndex] = { file: selectedSquare.value.file, rank: selectedSquare.value.rank, piece: { code: '', name: 'none' }, color: null }
   }
+  if (item.piece.name === "Pawn") {
+    // Can move 2 ranks when move first in the game
+    if (!item.piece.isMoved) {
+      const index = chessboard.value.findIndex((piece) => {
+        return piece.file === item.file && piece.rank === item.rank + (item.color === 'b' ? 2 : -2)
+      });
+      nextChoice.value.push(index);
+    }
+
+    // Can attack diagonally in front of 1 rank
+
+    // Pawn moves 1 rank
+    const index = chessboard.value.findIndex((piece) => {
+      return piece.file === item.file && piece.rank === item.rank + (item.color === 'b' ? 1 : -1)
+    });
+    nextChoice.value.push(index);
+  }
+  selectedSquare.value = { item, index };
+  console.log(selectedSquare.value)
 }
 
 onMounted(() => {
@@ -213,6 +234,12 @@ const getDadJoke = async () => {
         }
         .b {
           background: black;
+        }
+        .choice {
+          width: 100%;
+          height: 100%;
+          border-radius: 0;
+          border: 2px solid blueviolet;
         }
       }
       .whiteSquare {
