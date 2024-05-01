@@ -15,10 +15,11 @@
           :class="{
             whiteSquare:
               (parseInt(index / 8) % 2 === 0 && index % 2 === 0) ||
-              (parseInt(index / 8) % 2 === 1 && index % 2 === 1)
+              (parseInt(index / 8) % 2 === 1 && index % 2 === 1),
+            choice: presentIndex === index
           }"
         >
-          <div class="piece" :class="`${item.color}`, { choice: nextChoice.includes(index) }" @click="handlePiece(item, index)">
+          <div class="piece" :class="`${item.color}`" @click="handlePiece(item, index)">
             {{ item.piece.code }}
           </div>
         </div>
@@ -37,8 +38,10 @@ const isLoading = ref(false)
 
 const chessboard = ref([])
 const isBlack = ref(true)
-const nextChoice = ref([])
-const selectedSquare = ref()
+const presentIndex = ref()
+const presentSquare = ref([])
+const turnCount = ref(0)
+const turnColor = ref('b')
 const teamColor = computed(() => {
   const myColor = isBlack.value ? 'b' : 'w'
   const oppoColor = isBlack.value ? 'w' : 'b'
@@ -53,7 +56,7 @@ const piece = [
   { code: 'r', name: 'Rook' },
   { code: 'b', name: 'Bishop' },
   { code: 'n', name: 'Knight' },
-  { code: 'p', name: 'Pawn', isMoved: false },
+  { code: 'p', name: 'Pawn' },
   { code: '', name: 'none' }
 ]
 
@@ -121,31 +124,20 @@ const initGame = () => {
 }
 
 const handlePiece = (item, index) => {
-  console.log(item)
-  if (nextChoice.value.includes(index)) {
-    nextChoice.value = [];
-    const selectedIndex = selectedSquare.value.index;
-    chessboard.value[index] = selectedSquare.value.item;
-    chessboard.value[selectedIndex] = { file: selectedSquare.value.file, rank: selectedSquare.value.rank, piece: { code: '', name: 'none' }, color: null }
-  }
-  if (item.piece.name === "Pawn") {
-    // Can move 2 ranks when move first in the game
-    if (!item.piece.isMoved) {
-      const index = chessboard.value.findIndex((piece) => {
-        return piece.file === item.file && piece.rank === item.rank + (item.color === 'b' ? 2 : -2)
-      });
-      nextChoice.value.push(index);
+  if (turnCount.value === 0) {
+    presentIndex.value = index;
+    presentSquare.value.push(item);
+    turnCount.value ++;
+  } else if (turnCount.value === 1) {
+    if (item !== presentSquare.value[0]) {
+      chessboard.value[index] = presentSquare.value[0];
+      chessboard.value[presentIndex.value] = { file: presentIndex.value.file, rank: presentIndex.value.rank, piece: piece[6], color: null }
     }
-
-    // Can attack diagonally in front of 1 rank
-
-    // Pawn moves 1 rank
-    const index = chessboard.value.findIndex((piece) => {
-      return piece.file === item.file && piece.rank === item.rank + (item.color === 'b' ? 1 : -1)
-    });
-    nextChoice.value.push(index);
+    presentIndex.value = null;
+    presentSquare.value = [];
+    turnCount.value = 0;
+    turnColor.value = turnColor.value === 'w' ? 'b' : 'w';
   }
-  selectedSquare.value = { item, index };
 }
 
 onMounted(() => {
@@ -196,15 +188,12 @@ onMounted(() => {
         .b {
           background: black;
         }
-        .choice {
-          width: 100%;
-          height: 100%;
-          border-radius: 0;
-          border: 2px solid blueviolet;
-        }
       }
       .whiteSquare {
         background: #ffd0a1;
+      }
+      .choice {
+        border: 2px solid blueviolet;
       }
     }
   }
