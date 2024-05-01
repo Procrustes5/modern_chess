@@ -4,10 +4,11 @@
       <div class="nav-bar">
         <span class="title">Play Chess!</span>
         <div class="turn-notify">
-          <span>Turn : Black</span>
+          <span>{{ `TURN : ${turnColor === 'w' ? 'WHITE': 'BLACK'}` }}</span>
         </div>
       </div>
-      <div class="chessboard">
+      <div class="chessboard-wrapper">
+        <div class="chessboard">
         <div
           v-for="(item, index) in chessboard"
           :key="index"
@@ -19,10 +20,28 @@
             choice: presentIndex === index
           }"
         >
-          <div class="piece" :class="`${item.color}`" @click="handlePiece(item, index)">
-            {{ item.piece.code }}
+          <div class="piece" :class="`${item.color}`, `${item.piece.name}`" @click="handlePiece(item, index)">
+            <div v-if="item.piece.code === 'k'" class="piece-detail">
+              {{ `&#x265a;`}}
+            </div>
+            <div v-else-if="item.piece.code === 'q'" class="piece-detail">
+              {{ `&#x265b;`}}
+            </div>
+            <div v-else-if="item.piece.code === 'r'" class="piece-detail">
+              {{ `&#x265c;` }}
+            </div>
+            <div v-else-if="item.piece.code === 'b'" class="piece-detail">
+              {{ `&#x265d;`}}
+            </div>
+            <div v-else-if="item.piece.code === 'n'" class="piece-detail">
+              {{ `&#x265e;`}}
+            </div>
+            <div v-else-if="item.piece.code === 'p'" class="piece-detail">
+              {{ `&#x265f;`}}
+            </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -157,8 +176,23 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
     .nav-bar {
-      width: 200px;
-      height: 100%;
+      width: 500px;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .title {
+        font-size: 40px;
+        font-weight: 600;
+      }
+      .turn-notify {
+        font-size: 32px;
+      }
+    }
+    .chessboard-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
     }
     .chessboard {
       width: 600px;
@@ -171,22 +205,29 @@ onMounted(() => {
         align-items: center;
         background: #cf9052;
         .piece {
-          width: 80%;
-          height: 80%;
+          width: 100%;
+          height: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
           border-radius: 50%;
-        }
-        .w, .b {
-          box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+          position: relative;
+          .piece-detail {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 95px;
+            position: absolute;
+            top: 1px;
+          }
         }
         .w {
-          background: white;
-          color: black;
+          color: white;
         }
         .b {
-          background: black;
+          color: black;
         }
       }
       .whiteSquare {
