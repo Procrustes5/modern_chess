@@ -1,3 +1,15 @@
+export const file = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+export const rank = [1, 2, 3, 4, 5, 6, 7, 8]
+export const piece = [
+  { code: 'k', name: 'King' },
+  { code: 'q', name: 'Queen' },
+  { code: 'r', name: 'Rook' },
+  { code: 'b', name: 'Bishop' },
+  { code: 'n', name: 'Knight' },
+  { code: 'p', name: 'Pawn' },
+  { code: '', name: 'none' }
+]
+
 export const initSquare = (piece, teamColor) => [
   // King
   { file: 4, rank: 7, piece: piece[0], color: teamColor.value.oppoColor },

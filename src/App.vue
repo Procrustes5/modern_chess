@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { initSquare, ja_rule_explanation } from './utils/convert';
+import { file, rank, piece, initSquare, ja_rule_explanation } from './utils/convert';
 
 const VITE_CHATGPT_TOKEN = import.meta.env.VITE_CHATGPT_TOKEN || 'any-default-local-build_env'
 const topic = ref('')
@@ -19,18 +19,6 @@ const teamColor = computed(() => {
   return { myColor, oppoColor }
 })
 
-const file = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-const rank = [1, 2, 3, 4, 5, 6, 7, 8]
-const piece = [
-  { code: 'k', name: 'King' },
-  { code: 'q', name: 'Queen' },
-  { code: 'r', name: 'Rook' },
-  { code: 'b', name: 'Bishop' },
-  { code: 'n', name: 'Knight' },
-  { code: 'p', name: 'Pawn' },
-  { code: '', name: 'none' }
-]
-
 const createChessboard = () => {
   for (let j = rank.length; j > 0; j--) {
     for (let i = 0; i < file.length; i++) {
@@ -45,7 +33,6 @@ const createChessboard = () => {
 };
 
 const initGame = () => {
-
   initSquare(piece, teamColor).forEach((init) => {
     const index = chessboard.value.findIndex((item) => {
       return item.file === init.file && item.rank === init.rank
@@ -74,7 +61,6 @@ const handlePiece = (item, index) => {
 onMounted(() => {
   createChessboard();
   initGame();
-  console.log(chessboard.value)
 });
 </script>
 <template>
@@ -87,7 +73,7 @@ onMounted(() => {
             {{ `TURN : ${turnColor === 'w' ? 'WHITE': 'BLACK'}` }}
           </span>
         </div>
-        <div class="rule-explanation" v-if="chessboard[presentIndex]?.piece.color">
+        <div class="rule-explanation" v-if="chessboard[presentIndex]?.color">
           <span class="rule-book">Rule Book</span>
           <span class="piece-name">
             {{ `名前：${ja_rule_explanation.filter((item) => item.code === chessboard[presentIndex]?.piece.code)[0]?.name}` }}
@@ -181,6 +167,9 @@ onMounted(() => {
         .piece-name {
           font-size: 20px;
           margin-bottom: 12px;
+        }
+        .piece-explanation {
+          font-size: 16px;
         }
       }
     }
