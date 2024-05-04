@@ -1,6 +1,8 @@
+import type { Piece, ChessSquare } from './utils/type'
+
 export const file = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 export const rank = [1, 2, 3, 4, 5, 6, 7, 8]
-export const piece = [
+export const piece: Piece[] = [
   { code: 'k', name: 'King' },
   { code: 'q', name: 'Queen' },
   { code: 'r', name: 'Rook' },
@@ -10,7 +12,7 @@ export const piece = [
   { code: '', name: 'none' }
 ]
 
-export const initSquare = (piece, teamColor) => [
+export const initSquare = (piece: Piece, teamColor: computed<{ myColor: string, oppoColor: string }>) => [
   // King
   { file: 4, rank: 7, piece: piece[0], color: teamColor.value.oppoColor },
   { file: 3, rank: 0, piece: piece[0], color: teamColor.value.myColor },
@@ -52,7 +54,7 @@ export const initSquare = (piece, teamColor) => [
   { file: 7, rank: 1, piece: piece[5], color: teamColor.value.myColor }
 ]
 
-export const ja_rule_explanation = [
+export const ja_rule_explanation: { code: string, content: string }[] = [
   { code: 'k', content: 'キングは1歩だけ八方に動きます。\n＜将棋の王将＞', name: 'キング' },
   { code: 'q', content: 'クイーンは八方に動く最強の駒です。\n＜将棋の飛車＋角行＞', name: 'クイーン' },
   { code: 'r', content: 'ルークはたて横に動きます。\n＜将棋の飛車＞', name: 'ルック' },
