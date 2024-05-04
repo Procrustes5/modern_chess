@@ -46,14 +46,14 @@ const initGame = (): void => {
 
 // 駒の移動
 const handlePiece = (item: ChessSquare, index: number): void => {
-  if (phaseCount.value === 0) {
-    // 駒を選択
+  if (phaseCount.value === 0 && item.color === turnColor.value) {
+    // 駒を選択（自分のターンの駒のみ選択可能）
     presentIndex.value = index;
     presentSquare.value.push(item);
     phaseCount.value++;
-  } else if (phaseCount.value === 1) {
+  } else if (phaseCount.value === 1 && presentSquare.value[0].color === turnColor.value) {
     // 移動位置を決定し、駒を移動
-    if (item !== presentSquare.value[0]) {
+    if (item !== presentSquare.value[0] && (item.color !== turnColor.value || item.color === null)) {
       const oldIndex = presentIndex.value;
       const oldPiece = chessboard.value[oldIndex];
 
@@ -64,6 +64,7 @@ const handlePiece = (item: ChessSquare, index: number): void => {
         piece: piece[6],
         color: null
       };
+
       // 移動後の処理と履歴の更新
       if (!isBoardUnchanged(oldIndex, index)) {
         handleChessboardHistory();
