@@ -120,7 +120,7 @@ onMounted(() => {
       <div class="nav-bar">
         <span class="title">ハローチェス</span>
         <div class="turn-notify">
-          <span>
+          <span class="turn-notify-text">
             {{ `TURN : ${turnColor === 'w' ? 'WHITE' : 'BLACK'}` }}
           </span>
           <div class="turn-color" :class="turnColor"></div>
@@ -146,6 +146,10 @@ onMounted(() => {
             <span>出典：日本チェス連盟</span>
           </div>   
         </div>
+        <div class="btns">
+          <div class="btn restart">リスタート</div>
+          <div class="btn undo">戻す</div>
+        </div>
       </div>
       <div class="chessboard-wrapper">
         <div class="chessboard">
@@ -166,22 +170,22 @@ onMounted(() => {
               @click="handlePiece(item, index)"
             >
               <div v-if="item.piece.code === 'k'" class="piece-detail">
-                <span>{{ `&#x265a;` }}</span>
+                <span class="piece-text">{{ `&#x265a;` }}</span>
               </div>
               <div v-else-if="item.piece.code === 'q'" class="piece-detail">
-                <span>{{ `&#x265b;` }}</span>
+                <span class="piece-text">{{ `&#x265b;` }}</span>
               </div>
               <div v-else-if="item.piece.code === 'r'" class="piece-detail">
-                <span>{{ `&#x265c;` }}</span>
+                <span class="piece-text">{{ `&#x265c;` }}</span>
               </div>
               <div v-else-if="item.piece.code === 'b'" class="piece-detail">
-                <span>{{ `&#x265d;` }}</span>
+                <span class="piece-text">{{ `&#x265d;` }}</span>
               </div>
               <div v-else-if="item.piece.code === 'n'" class="piece-detail">
-                <span>{{ `&#x265e;` }}</span>
+                <span class="piece-text">{{ `&#x265e;` }}</span>
               </div>
               <div v-else-if="item.piece.code === 'p'" class="piece-detail">
-                <span>{{ `&#x265f;` }}</span>
+                <span class="piece-text">{{ `&#x265f;` }}</span>
               </div>
             </div>
           </div>
