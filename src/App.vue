@@ -113,7 +113,7 @@ onMounted(() => {
           >
             <div
               class="piece"
-              :class="(item.color, item.piece.name)"
+              :class="[item.color, item.piece.name]"
               @click="handlePiece(item, index)"
             >
               <div v-if="item.piece.code === 'k'" class="piece-detail">
