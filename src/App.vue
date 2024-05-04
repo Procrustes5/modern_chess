@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { file, rank, piece, initSquare, ja_rule_explanation, ja_flow_explanation } from './utils/convert'
-import type { Piece, ChessSquare } from './utils/type'
+import type { Piece, ChessSquare, Chessboard } from './utils/type'
 
 // ChatGPTの準備
 const VITE_CHATGPT_TOKEN = import.meta.env.VITE_CHATGPT_TOKEN || 'any-default-local-build_env'
 
-const chessboard = ref<ChessSquare[]>([])
+const chessboard = ref<Chessboard>([])
+const chessboardHistory = ref<Chessboard[]>([])
 const isBlack = ref<Boolean>(true)
 const presentIndex = ref<number>(-1)
 const presentSquare = ref<ChessSquare[]>([])
-const turnCount = ref<number>(0)
+const phaseCount = ref<number>(0)
 const turnColor = ref<string>('b')
 
 const teamColor = computed<{ myColor: string; oppoColor: string }>(() => {
@@ -45,27 +46,52 @@ const initGame = (): void => {
 
 // 駒の移動
 const handlePiece = (item: ChessSquare, index: number): void => {
-  if (turnCount.value === 0) {
-    // 駒を選択したら
-    presentIndex.value = index
-    presentSquare.value.push(item)
-    turnCount.value++
-  } else if (turnCount.value === 1) {
-    // 駒の移動位置を決定
+  if (phaseCount.value === 0) {
+    // 駒を選択
+    presentIndex.value = index;
+    presentSquare.value.push(item);
+    phaseCount.value++;
+  } else if (phaseCount.value === 1) {
+    // 移動位置を決定し、駒を移動
     if (item !== presentSquare.value[0]) {
-      chessboard.value[index] = presentSquare.value[0]
-      chessboard.value[presentIndex.value] = {
-        file: chessboard.value[presentIndex.value].file,
-        rank: chessboard.value[presentIndex.value].rank,
+      const oldIndex = presentIndex.value;
+      const oldPiece = chessboard.value[oldIndex];
+
+      chessboard.value[index] = presentSquare.value[0];
+      chessboard.value[oldIndex] = {
+        file: oldPiece.file,
+        rank: oldPiece.rank,
         piece: piece[6],
         color: null
+      };
+      // 移動後の処理と履歴の更新
+      if (!isBoardUnchanged(oldIndex, index)) {
+        handleChessboardHistory();
+        turnColor.value = turnColor.value === 'w' ? 'b' : 'w';
       }
     }
-    // 移動したら初期化
-    presentIndex.value = -1
-    presentSquare.value = []
-    turnCount.value = 0
-    turnColor.value = turnColor.value === 'w' ? 'b' : 'w'
+    // 変数をリセット
+    resetMove();
+  }
+};
+
+const isBoardUnchanged = (oldIndex: number, newIndex: number): boolean => {
+  // 移動前後でボードが変わったか確認
+  return chessboard.value[oldIndex].piece === piece[6] && chessboard.value[newIndex] === presentSquare.value[0];
+};
+
+const resetMove = (): void => {
+  presentIndex.value = -1;
+  presentSquare.value = [];
+  phaseCount.value = 0;
+};
+
+const handleChessboardHistory = (): void => {
+  chessboardHistory.value.push([...chessboard.value]);
+
+  // 履歴はひとまず三つまで持っておく
+  if (chessboardHistory.value.length > 3) {
+    chessboardHistory.value.shift();
   }
 }
 

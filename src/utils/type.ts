@@ -9,3 +9,5 @@ export interface ChessSquare {
   piece: Piece
   color: string | null
 }
+
+export type Chessboard = ChessSquare[]
