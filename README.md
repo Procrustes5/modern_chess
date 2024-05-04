@@ -1,8 +1,9 @@
 # Hello Chess
 VueとViteで開発した、ウェブ上でプレーできるチェスゲームです。
 
-以下リンクで遊ぶことができます
+以下リンクで遊ぶことができます。
 [プレー](https://main.d3uhy8oxc7w2jb.amplifyapp.com/)
+⚠️モバイル環境では正常な動作ができません
 
 ## プレー画面
 <img width="1250" alt="スクリーンショット 2024-05-04 15 37 15" src="https://github.com/Procrustes5/modern_chess/assets/66271155/f6db7542-0522-42d7-8a9e-d9b409288e0b">
