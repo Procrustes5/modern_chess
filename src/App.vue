@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { file, rank, piece, initSquare, ja_rule_explanation } from './utils/convert'
+import { file, rank, piece, initSquare, ja_rule_explanation, ja_flow_explanation } from './utils/convert'
 import type { Piece, ChessSquare } from './utils/type'
 
 // ChatGPTの準備
@@ -84,18 +84,21 @@ onMounted(() => {
             {{ `TURN : ${turnColor === 'w' ? 'WHITE' : 'BLACK'}` }}
           </span>
         </div>
-        <div class="rule-explanation" v-if="chessboard[presentIndex]?.color">
-          <span class="rule-book">Rule Book</span>
-          <span class="piece-name">
+        <div class="rule-explanation">
+          <span class="rule-book">Rule</span>
+          <span class="piece-name" v-if="chessboard[presentIndex]?.color">
             {{
               `名前：${ja_rule_explanation.filter((item) => item.code === chessboard[presentIndex]?.piece.code)[0]?.name}`
             }}
           </span>
-          <span class="piece-explanation">
+          <span class="piece-explanation" v-if="chessboard[presentIndex]?.color">
             {{
               `${ja_rule_explanation.filter((item) => item.code === chessboard[presentIndex]?.piece.code)[0]?.content}`
             }}
           </span>
+          <div class="piece-explanation flow" v-else>
+            <span v-for="(item, index) in ja_flow_explanation">{{ item }}</span>
+          </div>
         </div>
       </div>
       <div class="chessboard-wrapper">

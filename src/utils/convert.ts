@@ -82,5 +82,12 @@ export const ja_rule_explanation: { code: string; content: string }[] = [
       '前に1歩進みます。＜将棋の歩兵に相当＞\n最初の位置から2歩動いてもよい。\n駒を取る時だけななめ前！＜将棋と違う！＞',
     name: 'ポーン'
   },
-  { code: '', content: '移動する駒を選択してください' }
+  { code: '', content: '' }
+]
+
+export const ja_flow_explanation: string[] = [
+  '1. 相手の駒をマスからどけて',
+  '2. 盤の外に置き',
+  '3. 自分の駒を同じマスに置く',
+  '＜取った駒は使えない！＞'
 ]
