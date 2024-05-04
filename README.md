@@ -1,9 +1,9 @@
 # Hello Chess
-VueとViteで開発した、ウェブ上でプレーできるチェスゲームです。
+VueとViteで開発した、ウェブ上でプレイできるチェスゲームです。
 
 以下リンクで遊ぶことができます。
 
-[プレー](https://main.d3uhy8oxc7w2jb.amplifyapp.com/)
+[プレイ](https://main.d3uhy8oxc7w2jb.amplifyapp.com/)
 (⚠️モバイル環境では正常な動作ができません)
 
 ## プレー画面
