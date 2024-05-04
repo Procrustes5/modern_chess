@@ -109,9 +109,15 @@ const undoMove = (): void => {
   }
 };
 
-onMounted(() => {
+const startGame = (): void => {
+  chessboard.value = []
+  chessboardHistory.value = []
   createChessboard()
   initGame()
+}
+
+onMounted(() => {
+  startGame()
 })
 </script>
 <template>
@@ -147,8 +153,8 @@ onMounted(() => {
           </div>   
         </div>
         <div class="btns">
-          <div class="btn restart">リスタート</div>
-          <div class="btn undo">戻す</div>
+          <div class="btn restart" @click="startGame">リスタート</div>
+          <div class="btn undo" @click="undoMove">戻す</div>
         </div>
       </div>
       <div class="chessboard-wrapper">
