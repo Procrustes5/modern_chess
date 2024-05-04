@@ -1,54 +1,6 @@
-<template>
-  <div class="screen-wrapper">
-    <div class="playground">
-      <div class="nav-bar">
-        <span class="title">Play Chess!</span>
-        <div class="turn-notify">
-          <span>{{ `TURN : ${turnColor === 'w' ? 'WHITE': 'BLACK'}` }}</span>
-        </div>
-      </div>
-      <div class="chessboard-wrapper">
-        <div class="chessboard">
-        <div
-          v-for="(item, index) in chessboard"
-          :key="index"
-          class="square"
-          :class="{
-            whiteSquare:
-              (parseInt(index / 8) % 2 === 0 && index % 2 === 0) ||
-              (parseInt(index / 8) % 2 === 1 && index % 2 === 1),
-            choice: presentIndex === index
-          }"
-        >
-          <div class="piece" :class="`${item.color}`, `${item.piece.name}`" @click="handlePiece(item, index)">
-            <div v-if="item.piece.code === 'k'" class="piece-detail">
-              {{ `&#x265a;`}}
-            </div>
-            <div v-else-if="item.piece.code === 'q'" class="piece-detail">
-              {{ `&#x265b;`}}
-            </div>
-            <div v-else-if="item.piece.code === 'r'" class="piece-detail">
-              {{ `&#x265c;` }}
-            </div>
-            <div v-else-if="item.piece.code === 'b'" class="piece-detail">
-              {{ `&#x265d;`}}
-            </div>
-            <div v-else-if="item.piece.code === 'n'" class="piece-detail">
-              {{ `&#x265e;`}}
-            </div>
-            <div v-else-if="item.piece.code === 'p'" class="piece-detail">
-              {{ `&#x265f;`}}
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-    </div>
-  </div>
-</template>
 <script setup lang="ts">
-import axios from 'axios'
 import { ref, onMounted, computed } from 'vue'
+import { initSquare, ja_rule_explanation } from './utils/convert';
 
 const VITE_CHATGPT_TOKEN = import.meta.env.VITE_CHATGPT_TOKEN || 'any-default-local-build_env'
 const topic = ref('')
@@ -93,48 +45,8 @@ const createChessboard = () => {
 };
 
 const initGame = () => {
-  const initSquare = [
-    // King
-    { file: 4, rank: 7, piece: piece[0], color: teamColor.value.oppoColor },
-    { file: 3, rank: 0, piece: piece[0], color: teamColor.value.myColor },
-    // Queen
-    { file: 3, rank: 7, piece: piece[1], color: teamColor.value.oppoColor },
-    { file: 4, rank: 0, piece: piece[1], color: teamColor.value.myColor },
-    // Rook
-    { file: 0, rank: 7, piece: piece[2], color: teamColor.value.oppoColor },
-    { file: 0, rank: 0, piece: piece[2], color: teamColor.value.myColor },
-    { file: 7, rank: 7, piece: piece[2], color: teamColor.value.oppoColor },
-    { file: 7, rank: 0, piece: piece[2], color: teamColor.value.myColor },
-    // Bishop
-    { file: 2, rank: 7, piece: piece[3], color: teamColor.value.oppoColor },
-    { file: 2, rank: 0, piece: piece[3], color: teamColor.value.myColor },
-    { file: 5, rank: 7, piece: piece[3], color: teamColor.value.oppoColor },
-    { file: 5, rank: 0, piece: piece[3], color: teamColor.value.myColor },
-    // Knight
-    { file: 1, rank: 7, piece: piece[4], color: teamColor.value.oppoColor },
-    { file: 1, rank: 0, piece: piece[4], color: teamColor.value.myColor },
-    { file: 6, rank: 7, piece: piece[4], color: teamColor.value.oppoColor },
-    { file: 6, rank: 0, piece: piece[4], color: teamColor.value.myColor },
-    // Opponent Pawn 
-    { file: 0, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 1, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 2, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 3, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 4, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 5, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 6, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    { file: 7, rank: 6, piece: piece[5], color: teamColor.value.oppoColor },
-    // My Pawn 
-    { file: 0, rank: 1, piece: piece[5], color: teamColor.value.myColor },
-    { file: 1, rank: 1, piece: piece[5], color: teamColor.value.myColor },
-    { file: 2, rank: 1, piece: piece[5], color: teamColor.value.myColor },
-    { file: 3, rank: 1, piece: piece[5], color: teamColor.value.myColor },
-    { file: 4, rank: 1, piece: piece[5], color: teamColor.value.myColor },
-    { file: 5, rank: 1, piece: piece[5], color: teamColor.value.myColor },
-    { file: 6, rank: 1, piece: piece[5], color: teamColor.value.myColor },
-    { file: 7, rank: 1, piece: piece[5], color: teamColor.value.myColor }
-  ]
-  initSquare.forEach((init) => {
+
+  initSquare(piece, teamColor).forEach((init) => {
     const index = chessboard.value.findIndex((item) => {
       return item.file === init.file && item.rank === init.rank
     });
@@ -162,13 +74,73 @@ const handlePiece = (item, index) => {
 onMounted(() => {
   createChessboard();
   initGame();
+  console.log(chessboard.value)
 });
 </script>
-
+<template>
+  <div class="screen-wrapper">
+    <div class="playground">
+      <div class="nav-bar">
+        <span class="title">ハローチェス</span>
+        <div class="turn-notify">
+          <span>
+            {{ `TURN : ${turnColor === 'w' ? 'WHITE': 'BLACK'}` }}
+          </span>
+        </div>
+        <div class="rule-explanation" v-if="chessboard[presentIndex]?.piece.color">
+          <span class="rule-book">Rule Book</span>
+          <span class="piece-name">
+            {{ `名前：${ja_rule_explanation.filter((item) => item.code === chessboard[presentIndex]?.piece.code)[0]?.name}` }}
+          </span>
+          <span class="piece-explanation">
+            {{ `${ja_rule_explanation.filter((item) => item.code === chessboard[presentIndex]?.piece.code)[0]?.content}` }}
+          </span>
+        </div>
+      </div>
+      <div class="chessboard-wrapper">
+        <div class="chessboard">
+        <div
+          v-for="(item, index) in chessboard"
+          :key="index"
+          class="square"
+          :class="{
+            whiteSquare:
+              (parseInt(index / 8) % 2 === 0 && index % 2 === 0) ||
+              (parseInt(index / 8) % 2 === 1 && index % 2 === 1),
+            choice: presentIndex === index
+          }"
+        >
+          <div class="piece" :class="`${item.color}`, `${item.piece.name}`" @click="handlePiece(item, index)">
+            <div v-if="item.piece.code === 'k'" class="piece-detail">
+              <span>{{ `&#x265a;`}}</span>
+            </div>
+            <div v-else-if="item.piece.code === 'q'" class="piece-detail">
+              <span>{{ `&#x265b;`}}</span>
+            </div>
+            <div v-else-if="item.piece.code === 'r'" class="piece-detail">
+              <span>{{ `&#x265c;` }}</span>
+            </div>
+            <div v-else-if="item.piece.code === 'b'" class="piece-detail">
+              <span>{{ `&#x265d;`}}</span>
+            </div>
+            <div v-else-if="item.piece.code === 'n'" class="piece-detail">
+              <span>{{ `&#x265e;`}}</span>
+            </div>
+            <div v-else-if="item.piece.code === 'p'" class="piece-detail">
+              <span>{{ `&#x265f;`}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</template>
 <style scoped lang="scss">
 .screen-wrapper {
   width: 100vw;
   height: 100vh;
+  padding-left: 50px;
   .playground {
     width: 100%;
     height: 100%;
@@ -184,9 +156,32 @@ onMounted(() => {
       .title {
         font-size: 40px;
         font-weight: 600;
+        color: whitesmoke;
       }
       .turn-notify {
         font-size: 32px;
+      }
+      .rule-explanation {
+        width: 100%;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        padding: 12px 24px;
+        background: white;
+        border-radius: 6px;
+        opacity: 0.5;
+        margin-top: 12px;
+        .rule-book, .piece-name, .piece-explanation {
+          color: black;
+        }
+        .rule-book {
+          font-size: 30px;
+          font-weight: 600;
+        }
+        .piece-name {
+          font-size: 20px;
+          margin-bottom: 12px;
+        }
       }
     }
     .chessboard-wrapper {
@@ -204,6 +199,7 @@ onMounted(() => {
         justify-content: center;
         align-items: center;
         background: #cf9052;
+        cursor: pointer;
         .piece {
           width: 100%;
           height: 100%;
@@ -220,7 +216,11 @@ onMounted(() => {
             align-items: center;
             font-size: 95px;
             position: absolute;
+            box-sizing: border-box;
             top: 1px;
+            span {
+              line-height: 60px;
+            }
           }
         }
         .w {
@@ -234,7 +234,8 @@ onMounted(() => {
         background: #ffd0a1;
       }
       .choice {
-        border: 2px solid blueviolet;
+        border: 2px solid #4b362c;
+        box-sizing: border-box;
       }
     }
   }
